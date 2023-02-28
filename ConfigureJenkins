@@ -68,6 +68,8 @@ Create a Jenkins project which displays
 		pwd
 		printenv
 				[Save]
+	
+	Alternative >> export PATH="/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH"
 
 	Build Now >> Console Output
 		WORKSPACE_TMP=/var/lib/jenkins/workspace/SG_GameOfLifeV1@tmp
