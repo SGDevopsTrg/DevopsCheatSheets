@@ -42,6 +42,10 @@ Java:
 	echo "$PATH:$JAVA_HOME/bin" 
 	whereis java --> java: /usr/bin/java /usr/share/java /usr/share/man/man1/java.1.gz
 	
+	Temp ENV Variable Setup
+	export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+	export PATH="$JAVA_HOME/bin:$PATH"
+	
 ### Maven Installation ###
 --------------------------
 	sudo apt update
@@ -51,9 +55,26 @@ Java:
 ### Building a sample application using maven Refer Here for game of life code ###
 ----------------------------------------------------------------------------------
 * This project requires jdk 8
+* git clone https://github.com/wakaleo/game-of-life.git
+* cd game-of-life 
+* mvn validate --> validate pom.xml
 * To Compile the code (create .class files): mvn compile
 * To Run the automated Unit tests: mvn test
-* To Create the package (jar/war): mvn package
-* To copy the project: mvn install: will copy the project which you have build to the local repository. Along with jar/war files a pom also gets copied
+* cd gameoflife-web/target/surefire-reports
+	Validate report xml files
+* To Create the package (jar/war): mvn package --> Building war: /home/ubuntu/game-of-life/gameoflife-web/target/gameoflife.war
+* Remove target folders: mvn clean
+* To copy project: mvn install  --> will copy the project which you have build to the local repository. Along with jar/war files a pom also gets copied
+<Project-1> mvn install --> {copy project into .m2 Local Repo} --> <Project-2> {Refer .m2 Local Repo for Project-1 to resolve the dependency}
+* To copy project to remote repository: mvn deploy
 
----@@@ Maven will download all the necessary dependencies to compile/package/test from a maven central repository Refer Here and it downloads to M2_HOME which is by default <HOME-DIR>/.m2 which is referred as local repository. @@@---
+* When we were compiling, testing and packaging maven is downloading lot of stuff what is that?
+---@@@ Maven will download all the necessary dependencies to compile/package/test from a "Maven Central Repository" @@@---
+---@@@ Refer Here and it downloads to M2_HOME which is by default <HOME-DIR>/.m2 which is referred as local repository. @@@---
+	ls -al ~/.
+	cd ~/.m2/repository
+	ls
+
+cd game-of-life 
+mvn package
+
