@@ -1,1 +1,3 @@
 Jenkins => Ansible (Some machine with ip, username and password)
+
+Call Ansible from Jenkins => ansible-playbook .....
