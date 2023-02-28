@@ -56,7 +56,7 @@ Create a Jenkins project which displays
 	Enter an item name: SG_GameOfLifeV1
 	Project Type: Freestyle project [Ok]
 
-	General >> Description - Display System Information
+	General >> Description - Game Of Life V1
 
 	Build Steps >> Add build Step >> Execute shell
 		export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
@@ -68,8 +68,6 @@ Create a Jenkins project which displays
 		pwd
 		printenv
 				[Save]
-	
-	Alternative >> export PATH="/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH"
 
 	Build Now >> Console Output
 		WORKSPACE_TMP=/var/lib/jenkins/workspace/SG_GameOfLifeV1@tmp
@@ -77,7 +75,35 @@ Create a Jenkins project which displays
 		+ whoami: jenkins
 		+ pwd: /var/lib/jenkins/workspace/SG_GameOfLifeV1/game-of-life
 		+ printenv: JENKINS_HOME=/var/lib/jenkins / USER=jenkins / CI=true
-		
-Note: 
-	Maven Repository: /var/lib/jenkins/.m2/repository
-	Jenkins Workspace: /var/lib/jenkins/workspace
+
+----------------------------------------------------------------
+### Create a jenkins project to build game-of-life using git ###
+----------------------------------------------------------------
+*** Manual steps ***
+--------------------
+	git clone https://github.com/wakaleo/game-of-life.git
+	cd game-of-life
+	mvn package
+
+### New Item ###
+----------------
+	Enter an item name: SG_GameOfLifeV2
+	Project Type: Freestyle project [Ok]
+
+	General >> Description - Game Of Life V2
+
+	Source Code Management >> Git 
+		Repository URL: https://github.com/wakaleo/game-of-life.git
+		Branches to build: */master
+
+	Build Steps >> Add build Step >> Execute shell
+		export PATH="/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH"
+		java -version
+		mvn --version
+		mvn package
+				[Save]
+
+	Build Now >> Console Output
+		+ java -version --> openjdk version "1.8.0_362"
+		+ mvn --version --> Apache Maven 3.6.3
+		+ mvn package --> Finished: SUCCESS
