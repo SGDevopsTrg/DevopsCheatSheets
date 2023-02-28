@@ -29,7 +29,19 @@ Java:
 	sudo apt update
 	sudo apt install openjdk-8-jdk -y
 	java -version
-
+	whereis java --> java: /usr/bin/java /usr/share/java /usr/share/man/man1/java.1.gz
+	ls -al /usr/bin/java --> lrwxrwxrwx 1 root root 22 Feb 28 05:01 /usr/bin/java -> /etc/alternatives/java
+	ls -al /etc/alternatives/java --> lrwxrwxrwx 1 root root 46 Feb 28 05:01 /etc/alternatives/java -> /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+	ls -al /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java --> -rwxr-xr-x 1 root root 14632 Jan 24 19:02 /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+	cd /usr/lib/jvm/java-8-openjdk-amd64
+	echo $PATH --> /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+	java -version --> Java is added into /usr/bin directory
+	vi /etc/environment --> PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin" --> Set ENV variables for ALL USERS
+	vi ~/.bashrc --> JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" and PATH="$PATH:$JAVA_HOME/bin"  --> Set ENV variables for CURRENT USERS 
+	source ~/.bashrc
+	echo "$PATH:$JAVA_HOME/bin" 
+	whereis java --> java: /usr/bin/java /usr/share/java /usr/share/man/man1/java.1.gz
+	
 ### Maven Installation ###
 --------------------------
 	sudo apt update
