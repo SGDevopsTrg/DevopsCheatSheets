@@ -1,0 +1,50 @@
+### Installing Jenkins (Jenkins is an open source CI/CD Engine) ###
+--------------------------------------------------------
+Jenkins: Java based Application and runs on port 8080
+	Using Package managers on Linux distribution (Papular)
+	Docker
+	Windows
+	Jenkins WAR file and run it on Tomcat.
+
+### Login into Ubuntu machine: ssh ubuntu@35.153.231.70 ### 
+-----------------------------------------------------------
+
+### JAVA Installation ###
+-------------------------
+	# OpenJDK 17
+	sudo apt update
+		sudo apt-cache search openjdk
+		sudo apt-cache madison openjdk-17-jdk
+	sudo apt-get install openjdk-17-jdk -y
+	java -version
+
+### Jenkins Installation ###
+----------------------------
+cat /etc/passwd --> Users in Linux system
+	ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
+	lxd:x:999:100::/var/snap/lxd/common/lxd:/bin/false
+
+Lets install Jenkins (https://www.jenkins.io/doc/book/installing/)
+For installing in ubuntu (https://www.jenkins.io/doc/book/installing/linux/#debianubuntu)
+	Lets install LTS (Long Term Support Version)
+
+	* sudo apt-get update
+	* curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+	* echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+	* sudo apt-get update
+	* sudo apt-get install jenkins -y
+
+	---@@@ After installing jenkins a user jenkins got created with /var/lib/jenkins as Home directory and /bin/bash as default shell @@@---
+	* cat /etc/passwd --> Users in Linux system
+		ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
+		lxd:x:999:100::/var/snap/lxd/common/lxd:/bin/false
+		jenkins:x:115:122:Jenkins,,,:/var/lib/jenkins:/bin/bash
+
+	---@@@ cat /etc/group --> has group jenkins:x:122: --> We have user and group called Jenkins @@@---
+	Now access jenkins using http://<publicip&gt;:8080 --> http://3.239.254.242:8080/
+	copy the inital secret and click on continue
