@@ -1,0 +1,77 @@
+### Configuring Jenkins (Jenkins is an open source CI/CD Engine) ###
+--------------------------------------------------------------------
+---@@@ Now access jenkins using http://<publicip>:8080 --> http://18.233.63.192:8080/ @@@---
+---@@@ /var/lib/jenkins - jenkins directory. We can take backup from here @@@---
+
+Jenkins has 3 project types (majorly)
+	Free Style: These projects are UI Based.
+	Scripted Pipeline
+	Declarative Pipeline
+
+------------------------------------------------------
+### First Project to display some system information ###
+-------------------------------------------------------
+*** Manual steps ***
+--------------------
+Create a Jenkins project which displays
+	* username: whoami
+	* current working directory: pwd
+	* all the environmental variables: printenv
+
+### New Item ###
+----------------
+	Enter an item name: SG_DisplaySystemInformation
+	Project Type: Freestyle project [Ok]
+
+	General >> Description - Display System Information
+
+	Build Steps >> Add build Step >> Execute shell
+		whoami
+		pwd
+		printenv
+				[Save]
+
+	Build Now >> Console Output
+		whoami: jenkins
+		pwd: /var/lib/jenkins/workspace/SG_DisplaySystemInformation
+		printenv: JENKINS_HOME=/var/lib/jenkins / USER=jenkins / CI=true
+
+------------------------------------------------------
+### Create a jenkins project to build game-of-life ###
+------------------------------------------------------
+*** Manual steps ***
+--------------------
+	git clone https://github.com/wakaleo/game-of-life.git
+	cd game-of-life
+	mvn package
+
+### Maven Installation ###
+--------------------------
+	sudo apt update
+	sudo apt install maven -y
+	mvn --version
+
+### New Item ###
+----------------
+	Enter an item name: SG_GameOfLifeV1
+	Project Type: Freestyle project [Ok]
+
+	General >> Description - Display System Information
+
+	Build Steps >> Add build Step >> Execute shell
+		export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+		export PATH=$JAVA_HOME/bin:$PATH
+		git clone https://github.com/wakaleo/game-of-life.git
+		cd game-of-life
+		mvn package
+		whoami
+		pwd
+		printenv
+				[Save]
+
+	Build Now >> Console Output
+		WORKSPACE_TMP=/var/lib/jenkins/workspace/SG_GameOfLifeV1@tmp
+		Finished: SUCCESS
+		+ whoami: jenkins
+		+ pwd: /var/lib/jenkins/workspace/SG_GameOfLifeV1/game-of-life
+		+ printenv: JENKINS_HOME=/var/lib/jenkins / USER=jenkins / CI=true
