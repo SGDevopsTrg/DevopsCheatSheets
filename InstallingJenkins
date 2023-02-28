@@ -6,7 +6,20 @@ Jenkins: Java based Application and runs on port 8080
 	Windows
 	Jenkins WAR file and run it on Tomcat.
 
-### Login into Ubuntu machine: ssh ubuntu@35.153.231.70 ### 
+### AWS COnsole Configuration ###
+---------------------------------
+EC2 > Instances > Launch an instance
+Name and tags: SGJenkinsTrg
+Application and OS Images (Amazon Machine Image): Ubuntu
+Instance type: t2.micro
+Key pair name: SG_DellDesktop_ID_RSA
+Network settings: Create Security Group [Edit] --> Very Imp Step
+	Security group name: Jenkins
+	Inbound security groups rules: 
+		Security group rule 1: ssh/TCP/22/Anywhere/
+		Security group rule 2: Custom TCP/TCP/8080/Anywhere/
+
+### Login into Ubuntu machine: ssh ubuntu@18.233.63.192 ### 
 -----------------------------------------------------------
 
 ### JAVA Installation ###
@@ -40,11 +53,26 @@ For installing in ubuntu (https://www.jenkins.io/doc/book/installing/linux/#debi
 	* sudo apt-get install jenkins -y
 
 	---@@@ After installing jenkins a user jenkins got created with /var/lib/jenkins as Home directory and /bin/bash as default shell @@@---
-	* cat /etc/passwd --> Users in Linux system
+	* cat /etc/passwd --> Check users in Linux system
 		ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
 		lxd:x:999:100::/var/snap/lxd/common/lxd:/bin/false
 		jenkins:x:115:122:Jenkins,,,:/var/lib/jenkins:/bin/bash
 
-	---@@@ cat /etc/group --> has group jenkins:x:122: --> We have user and group called Jenkins @@@---
-	Now access jenkins using http://<publicip&gt;:8080 --> http://3.239.254.242:8080/
-	copy the inital secret and click on continue
+	---@@@ cat /etc/group --> Check group in Linux system 
+		jenkins:x:122:
+
+	---@@@ Now access jenkins using http://<publicip&gt;:8080 --> http://18.233.63.192:8080/ @@@---
+	-----------------------------------------------------------------------------------------------
+		Getting started >> Unlock Jenkins >> Get ID while running below command
+			sudo cat /var/lib/jenkins/secrets/initialAdminPassword --> 56974155bcc4441c8d36de697a8d4894
+		Copy the inital secret and click on continue
+		Customize Jenkins >> Install suggested plugins
+		Create First Admin User 
+			Username: 
+			Password:
+			Full Name:
+			Email:
+		Instance Configuration: [Save & Finish]
+			Jenkins URL: http://18.233.63.192:8080/
+		Start using Jenkins 
+	---@@@ /var/lib/jenkins - jenkins directory. We can take backup from here @@@---
