@@ -1,0 +1,47 @@
+### Installing Maven ###
+------------------------
+
+Required softwares to be installed for Maven build
+Java:
+	Distributions: Just like Linux distributions such as Ubuntu, RedHat etc.
+		OpenJDK - Free for Usage
+		Oracle JDK
+		IBM JDK
+		Amazon Corretto JDK
+	
+	Versions:
+		8
+		11
+		17
+		19
+
+	Environmental Variables:
+		PATH - When you type any command my Windows OS searches in PATH varible -> echo $env:PATH
+			C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\dotnet\;C:\Program Files\nodejs\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\apache-maven-3.8.7\bin;C:\ProgramData\chocolatey\bin;C:\Users\sande\AppData\Local\Microsoft\WindowsApps;C:\Users\sande\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\sande\AppData\Roaming\npm
+		JAVA_HOME - C:\Program Files\Common Files\Oracle\Java\javapath
+		M2_HOME - C:\Program Files\apache-maven-3.8.7\bin
+
+---@@@ Use Chocolatey.org to install softwares in windows @@@---
+
+### JAVA Installation ###
+-------------------------
+	# OpenJDK 8
+	sudo apt update
+	sudo apt install openjdk-8-jdk -y
+	java -version
+
+### Maven Installation ###
+--------------------------
+	sudo apt update
+	sudo apt install maven -y
+	mvn --version
+
+### Building a sample application using maven Refer Here for game of life code ###
+----------------------------------------------------------------------------------
+* This project requires jdk 8
+* To Compile the code (create .class files): mvn compile
+* To Run the automated Unit tests: mvn test
+* To Create the package (jar/war): mvn package
+* To copy the project: mvn install: will copy the project which you have build to the local repository. Along with jar/war files a pom also gets copied
+
+---@@@ Maven will download all the necessary dependencies to compile/package/test from a maven central repository Refer Here and it downloads to M2_HOME which is by default <HOME-DIR>/.m2 which is referred as local repository. @@@---
