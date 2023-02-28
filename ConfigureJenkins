@@ -77,3 +77,7 @@ Create a Jenkins project which displays
 		+ whoami: jenkins
 		+ pwd: /var/lib/jenkins/workspace/SG_GameOfLifeV1/game-of-life
 		+ printenv: JENKINS_HOME=/var/lib/jenkins / USER=jenkins / CI=true
+		
+Note: 
+	Maven Repository: /var/lib/jenkins/.m2/repository
+	Jenkins Workspace: /var/lib/jenkins/workspace
