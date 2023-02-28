@@ -1,0 +1,200 @@
+### Configuring Jenkins (Jenkins is an open source CI/CD Engine) ###
+--------------------------------------------------------------------
+
+### AWS Console Configuration ###
+---------------------------------
+EC2 > Instances > Launch an instance > 2 Instances (Master & Node)
+Name and tags: Jenkins
+Application and OS Images (Amazon Machine Image): Ubuntu
+Instance type: t2.micro
+Key pair name: SG_AWSKeyPair_PEM_RSA
+Network settings: Create Security Group [Edit] --> Very Imp Step
+	Security group name: Jenkins
+	Inbound security groups rules: 
+		Security group rule 1: ssh/TCP/22/Anywhere/
+		Security group rule 2: Custom TCP/TCP/8080/Anywhere/
+
+AWS > Network & Security > Key Pair > SG_AWSKeyPair_PEM_RSA
+	Log in to the AWS Management Console and select EC2 from the list of services.
+	Click on the "Key Pairs" option in the left-hand navigation pane.
+	Click on the "Create Key Pair" button.
+	Give your key pair a name.
+	Select the file format as "PEM."
+	Click on the "Create Key Pair" button.
+	The private key file will be downloaded to your computer. Save it in a secure location.
+
+-----------------------------------------------------------------------------------------------------------------------
+### Login into Ubuntu Jenkins node machine: ssh -i C:\Users\sande\.ssh\SG_AWSKeyPair_PEM_RSA.pem ubuntu@54.160.73.244
+-----------------------------------------------------------------------------------------------------------------------
+### JAVA Installation ###
+	# OpenJDK 8 and 17
+	sudo apt update
+		sudo apt-cache search openjdk
+		sudo apt-cache madison openjdk-17-jdk
+	sudo apt-get install openjdk-17-jdk -y
+	sudo apt-get install openjdk-8-jdk -y
+	java -version
+
+### Maven Installation ###
+--------------------------
+	sudo apt update
+	sudo apt install maven -y
+	mvn --version
+
+### One Command: sudo apt-get install openjdk-17-jdk openjdk-8-jdk maven -y ###
+
+-----------------------------------------------------------------------------------------------------------------------
+### Login into Ubuntu Jenkins Master machine: ssh -i C:\Users\sande\.ssh\SG_AWSKeyPair_PEM_RSA.pem ubuntu@52.91.153.176
+-----------------------------------------------------------------------------------------------------------------------
+### JAVA Installation ###
+	# OpenJDK 17
+	sudo apt update
+		sudo apt-cache search openjdk
+		sudo apt-cache madison openjdk-17-jdk
+	sudo apt-get install openjdk-17-jdk -y
+	java -version
+
+### Jenkins Installation ###
+----------------------------
+cat /etc/passwd --> Users in Linux system
+	ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
+	lxd:x:999:100::/var/snap/lxd/common/lxd:/bin/false
+
+Lets install Jenkins (https://www.jenkins.io/doc/book/installing/)
+For installing in ubuntu (https://www.jenkins.io/doc/book/installing/linux/#debianubuntu)
+	Lets install LTS (Long Term Support Version)
+
+	* sudo apt-get update
+	* curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+	* echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+	* sudo apt-get update
+	* sudo apt-get install jenkins -y
+
+	---@@@ After installing jenkins a user jenkins got created with /var/lib/jenkins as Home directory and /bin/bash as default shell @@@---
+	* cat /etc/passwd --> Check users in Linux system
+		ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
+		lxd:x:999:100::/var/snap/lxd/common/lxd:/bin/false
+		jenkins:x:115:122:Jenkins,,,:/var/lib/jenkins:/bin/bash
+
+	---@@@ cat /etc/group --> Check group in Linux system 
+		jenkins:x:122:
+
+	---@@@ Now access jenkins using http://<publicip&gt;:8080 --> http://52.91.153.176:8080/ @@@---
+	-----------------------------------------------------------------------------------------------
+		Getting started >> Unlock Jenkins >> Get ID while running below command
+			sudo cat /var/lib/jenkins/secrets/initialAdminPassword --> 56974155bcc4441c8d36de697a8d4894
+		Copy the inital secret and click on continue
+		Customize Jenkins >> Install suggested plugins
+		Create First Admin User 
+			Username: 
+			Password:
+			Full Name:
+			Email:
+		Instance Configuration: [Save & Finish]
+			Jenkins URL: http://18.233.63.192:8080/
+		Start using Jenkins 
+	---@@@ Now access jenkins using http://<publicip>:8080 --> http://18.233.63.192:8080/ @@@---
+	---@@@ /var/lib/jenkins - jenkins directory. We can take backup from here @@@---
+
+
+------------------------------------------------------
+### Free Style: These projects are UI Based  ###
+### Create a jenkins project to build game-of-life ###
+------------------------------------------------------
+
+Dashboard > Manage Jenkins > Manage Credentials > System > Global credentials (unrestricted) > [New credentials]
+	Kind: SSH Username with private key
+	Scope: Global
+	ID: AWS_UBUNTU_KEYPAIR_PEM
+	Description: AWSVPC PEM
+	Username: ubuntu
+	Private Key: Enter directly > Key > Refer SG_AWSKeyPair_PEM_RSA Key
+		[Create]
+
+Dashboard > Manage Jenkins > Manage nodes and clouds > New node
+	Node name: SG_Jenkins_Node1
+	Type: Permanent Agent
+		[Create]
+	Description: This node with JDK8 and Maven
+	Number of executors: 2
+	Remote root directory: /home/ubuntu/remote
+	Labels: MAVEN_JDK8
+	Usage: Only build jobs...
+	Launch method: via SSH
+	Host: Target IP 172.31.8.18
+	Credentials: ubuntu (AWSVPC PEM)
+	Host Key Verification Strategy: Non verifying...
+							[Save]
+	Dashboard > Manage Jenkins > Nodes > SG_Jenkins_Node1 > log
+	This is a Unix agent
+	Agent successfully connected and online
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Issue Faced:
+--------------------------------------------------------------------------------------------------------------------------------------------
+SSHLauncher{host='44.204.127.8', port=22, credentialsId='AWS_UBUNTU_KEYPAIR_PEM', jvmOptions='', javaPath='', prefixStartSlaveCmd='', suffixStartSlaveCmd='', launchTimeoutSeconds=60, maxNumRetries=10, retryWaitTime=15, sshHostKeyVerificationStrategy=hudson.plugins.sshslaves.verifiers.NonVerifyingKeyVerificationStrategy, tcpNoDelay=true, trackCredentials=true}
+[02/28/23 20:07:46] [SSH] Opening SSH connection to 44.204.127.8:22.
+[02/28/23 20:07:47] [SSH] WARNING: SSH Host Keys are not being verified. Man-in-the-middle attacks may be possible against this connection.
+ERROR: Server rejected the 1 private key(s) for ubuntu (credentialId:AWS_UBUNTU_KEYPAIR_PEM/method:publickey)
+[02/28/23 20:07:47] [SSH] Authentication failed.
+Authentication failed.
+[02/28/23 20:07:47] Launch failed - cleaning up connection
+[02/28/23 20:07:47] [SSH] Connection closed.
+
+Solution:
+Used ssh -i C:\Users\sande\.ssh\SG_AWSKeyPair_PEM_RSA.pem ubuntu@52.91.153.176 to login from terminal
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------
+Dashboard > Manage Jenkins > Global Tool Configuration
+------------------------------------------------------
+
+JDK installations >> [Add JDK]
+	Name: JDK_8_UBUNTU 
+	JAVA_HOME: /usr/lib/jvm/java-1.8.0-openjdk-amd64
+
+JDK installations >> [Add JDK]
+	Name: JDK_17_UBUNTU 
+	JAVA_HOME: /usr/lib/jvm/java-1.17.0-openjdk-amd64
+
+----------------------------------------------------------------
+### Create a jenkins project to build game-of-life ###
+----------------------------------------------------------------
+*** Manual steps ***
+--------------------
+	git clone https://github.com/wakaleo/game-of-life.git
+	cd game-of-life
+	mvn package
+
+### New Item ###
+----------------
+	Enter an item name: SG_GameOfLife
+	Project Type: Freestyle project [Ok]
+
+	General >> Description - Game Of Life
+	Dashboard > SG_GameOfLife > Configuration > JDK - JDK_8_UBUNTU
+	Dashboard > SG_GameOfLife > Configuration > Restrict where this project can be run > MAVEN_JDK8
+	Dashboard > SG_GameOfLife > Configuration > Source Code Management > Git
+		Repository URL: https://github.com/wakaleo/game-of-life.git
+		Branches to build: */master
+	Dashboard > SG_GameOfLife > Configuration > Build Environment > Delete workspace before build starts
+
+	Build Steps >> Add build Step >> Execute shell
+		java -version
+		mvn --version
+	Build Steps >> Add build Step >> Invoke top-level Maven targets
+		goal package
+				[Save]
+
+	Dashboard > SG_GameOfLife > Configuration > Post-build Actions >> Archive the artifacts >> **/gameoflife.war
+	Dashboard > SG_GameOfLife > Configuration > Publish JUnit test result report >> **/target/surefire-reports/TEST-*.xml
+
+	Build Now >> Console Output
+		Recording test results
+		[Checks API] No suitable checks publisher found.
+		Finished: SUCCESS
