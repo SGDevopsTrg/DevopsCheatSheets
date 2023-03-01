@@ -1,0 +1,125 @@
+### Install .NET 6.0 on Ubuntu using the following steps ###
+
+1. sudo apt-get update (Update the package list)
+2. sudo apt -y install dotnet6 (Install the .NET 6 SDK)
+3. dotnet --version (Verify the installation by running) -> 6.0.113
+
+
+### Install Nodejs v16.19.1 on Ubuntu using the following steps ###
+
+1. sudo apt-get update (Update the package list)
+2. sudo apt-get install -y curl dirmngr apt-transport-https lsb-release ca-certificates (Install the dependencies)
+3. curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - (Add the Node.js PPA to your system)
+4. sudo apt-get install -y nodejs (Install Node.js 16)
+5. node -v (Verify the installation of npm ) -> v16.19.1
+6. sudo apt-get install -y npm (Install the Node.js package manager)
+7. npm -v -> 8.19.3
+
+Manual Steps
+### Download Project from https://github.com/CICDProjects/MusicStore.git ###
+
+1. mkdir /tmp/MusicStore
+2. cd /tmp/MusicStore
+3. git init (Create Repo)
+4. git checkout -b main (Change Repo name)
+5. git pull https://github.com/CICDProjects/MusicStore.git (Pull Changes from git repo)
+
+--------------------------------------------------
+--------------------------------------------------
+------------------------------------------------------
+### Free Style: These projects are UI Based  ###
+### Create a jenkins project to build MusicStore ###
+------------------------------------------------------
+
+Dashboard > Manage Jenkins > Manage Credentials > System > Global credentials (unrestricted) > [New credentials]
+	Kind: SSH Username with private key
+	Scope: Global
+	ID: AWS_UBUNTU_KEYPAIR_PEM
+	Description: AWSVPC PEM
+	Username: ubuntu
+	Private Key: Enter directly > Key > Refer SG_AWSKeyPair_PEM_RSA Key
+		[Create]
+
+Dashboard > Manage Jenkins > Manage nodes and clouds > New node
+	Node name: SG_Jenkins_Node1
+	Type: Permanent Agent
+		[Create]
+	Description: This node with JDK8 and Maven
+	Number of executors: 2
+	Remote root directory: /home/ubuntu/remote
+	Labels: MAVEN_JDK8
+	Usage: Only build jobs...
+	Launch method: via SSH
+	Host: Target IP 172.31.8.18
+	Credentials: ubuntu (AWSVPC PEM)
+	Host Key Verification Strategy: Non verifying...
+							[Save]
+	Dashboard > Manage Jenkins > Nodes > SG_Jenkins_Node1 > log
+	This is a Unix agent
+	Agent successfully connected and online
+  
+  ### New Item ###
+----------------
+	Enter an item name: SG_MusicStore
+	Project Type: Freestyle project [Ok]
+
+	General >> Description - Music Store
+	Dashboard > SG_GameOfLife > Configuration > JDK - JDK_8_UBUNTU
+	Dashboard > SG_GameOfLife > Configuration > Restrict where this project can be run > MAVEN_JDK8
+	Dashboard > SG_GameOfLife > Configuration > Source Code Management > Git
+		Repository URL: https://github.com/CICDProjects/MusicStore.git
+		Branches to build: */master
+	Dashboard > SG_GameOfLife > Configuration > Build Environment > Delete workspace before build starts
+
+	Build Steps >> Add build Step >> Execute shell
+		java -version
+		mvn --version
+	Build Steps >> Add build Step >> Invoke top-level Maven targets
+		goal package
+				[Save]
+
+	Dashboard > SG_GameOfLife > Configuration > Post-build Actions >> Archive the artifacts >> **/gameoflife.war
+	Dashboard > SG_GameOfLife > Configuration > Publish JUnit test result report >> **/target/surefire-reports/TEST-*.xml
+
+	Build Now >> Console Output
+		Recording test results
+		[Checks API] No suitable checks publisher found.
+		Finished: SUCCESS
+    
+--------------------------------------------------
+
+### The steps to build project ###
+
+1. dotnet restore ./MusicStore/MusicStore.csproj -> Restored /tmp/MusicStore/MusicStore/MusicStore.csproj (in 1.11 sec).
+2. dotnet build ./MusicStore/MusicStore.csproj -> Build succeeded.     0 Warning(s)    0 Error(s)
+
+### The steps to run the unit tests ###
+
+1. dotnet restore ./MusicStoreTest/MusicStoreTest.csproj -> Restored /tmp/MusicStore/MusicStoreTest/MusicStoreTest.csproj (in 27.96 sec).
+2. dotnet build ./MusicStoreTest/MusicStoreTest.csproj
+	Build succeeded.
+	/tmp/MusicStore/MusicStoreTest/WeatherForecastControllerTest.cs(20,26): warning CS8604: Possible null reference argument for parameter 'factory' in 'ILogger<WeatherForecastController> LoggerFactoryExtensions.CreateLogger<WeatherForecastController>(ILoggerFactory factory)'. [/tmp/MusicStore/MusicStoreTest/MusicStoreTest.csproj]
+    		1 Warning(s)
+    		0 Error(s)
+3. dotnet test ./MusicStoreTest/MusicStoreTest.csproj 
+	Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: < 1 ms - /tmp/MusicStore/MusicStoreTest/bin/Debug/net6.0/MusicStoreTest.dll (net6.0)
+
+### To build the frontend ### 
+
+1. cd /tmp/MusicStore/MusicStore/ClientApp (Cd into ClientApp Folder)
+2. npm install (Install npm) -> 11 vulnerabilities (10 high, 1 critical)
+3. npm test (Test npm)
+	Test Suites: 1 passed, 1 total                                                                                                         
+	Tests:       1 passed, 1 total
+	Snapshots:   0 total
+	Time:        4.431 s
+	Ran all test suites.
+4. npm run start
+	You can now view musicstore in the browser.
+
+  	Local:            https://localhost:44473
+  	On Your Network:  https://172.31.62.204:44473
+
+	Note that the development build is not optimized.
+	To create a production build, use npm run build.
+	webpack compiled successfully
