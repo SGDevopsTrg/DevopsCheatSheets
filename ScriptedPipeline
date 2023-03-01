@@ -1,0 +1,25 @@
+------------------------------------
+### Scripted Pipeline Structure ###
+------------------------------------
+Node ('MAVEN_JDK8')
+  Stage ('vcs')
+    Step 1
+    Step 2
+    ....
+    Step n
+    
+  Stage
+    Step 1
+    Step 2
+    ....
+    Step n
+Node
+  Stage
+    Step 1
+    Step 2
+    ....
+    Step n
+    
+------------------------------------
+### Scripted Pipeline ###
+------------------------------------
